@@ -1,0 +1,22 @@
+   
+
+ /// <summary>
+        /// GetDescription -Provide enum description from enum value
+        ///  short st = 1;
+        /// ViewBag.Status1 = Extensions.GetDescription((BookingStatus)st);
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+
+public static string GetDescription(Enum value)
+        {
+            var enumMember = value.GetType().GetMember(value.ToString()).FirstOrDefault();
+            var descriptionAttribute =
+                enumMember == null
+                    ? default(DescriptionAttribute)
+                    : enumMember.GetCustomAttribute(typeof(DescriptionAttribute)) as DescriptionAttribute;
+            return
+                descriptionAttribute == null
+                    ? value.ToString()
+                    : descriptionAttribute.Description;
+        }
