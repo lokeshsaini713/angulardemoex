@@ -1,0 +1,78 @@
+ApiName-TakeFishingTripAPI  
+
+
+ public ApiResponses<bool> TakeFishingTripAPI(TakeFishingTripRequestModel request, string UserId)
+        {
+            var userTempId = UserId;
+            try
+            {
+                var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+                var currentLocation = geometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
+
+                TakeFishing trip = new TakeFishing();
+
+                trip.TripLocatopn = currentLocation;
+                trip.TripDate = request.Date;
+                trip.TripTime = request.Time;
+                trip.NoOfPeople = request.NoOfPeoples;
+                trip.IsChildrenAllow = request.IsChildrens;
+                trip.ChildrenAgeGroup = request.ChildrenAgeGroup;
+                trip.AgeGroup = request.AgeGroup;
+                trip.FishingType = request.FishingType;
+                trip.TripType = request.TripType;
+                trip.UpdatedOn = DateTime.UtcNow;
+                trip.IsActive = true;
+                trip.IsDelete = false;
+
+                dbContext.TakeFishing.Add(trip);
+                dbContext.SaveChanges();
+
+                return new ApiResponses<bool>(ResponseMsg.Ok, true, _errors, successMsg: "");
+              
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponses<bool>(ResponseMsg.Error, true, _errors, failureMsg: "");
+            }
+           
+        }
+
+
+
+
+
+
+
+
+
+
+
+public class TakeFishingTripRequestModel
+    {
+        public long Id { get; set; }
+
+
+        [Required(ErrorMessage = "Latitude is required")]
+        public double Latitude { get; set; }
+
+        [Required(ErrorMessage = "Longitude is required")]
+        public double Longitude { get; set; }
+
+        public string AddressLocation { get; set; }
+
+        [Required(ErrorMessage = "Date is required")]
+        public DateTime Date { get; set; }
+
+        [Required(ErrorMessage = "Time is required")]
+        public TimeSpan Time { get; set; }
+
+        public byte NoOfPeoples { get; set; }
+        public bool IsChildrens { get; set; }
+        public byte AgeGroup { get; set; }
+        public byte TripType { get; set; }
+        public byte FishingType { get; set; }
+        public byte ChildrenAgeGroup { get; set; }
+     
+
+    }
